@@ -1,20 +1,24 @@
 import { useContext } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import Hello from "./components/hello";
-import Login from "./components/login";
+import { Route, Routes } from "react-router-dom";
+import ChatRoom from "./components/ChatRoom";
+import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
 import Register from "./components/Register";
-import { UserContext } from "./services/UserProvider";
+import NotFound from "./components/NotFound";
+import { UserContext } from "./context/UserContext";
 
 function App() {
   const { user } = useContext(UserContext);
+
   return (
-    <>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={user ? <Hello /> : <Navigate to="/login" />} />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/" element={user ? <Dashboard/> : <Login/>}/>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/chat/:roomId" element={<ChatRoom />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
