@@ -43,12 +43,12 @@ function Dashboard() {
     navigate("/login");
   };
 
-  const goToRoom = (roomId) => {
-    navigate(`/chat/${roomId}`);
+  const goToRoom = (roomId,guest) => {
+    navigate(`/chat/${roomId}` , {state:{guest:guest}});
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
           Hoşgeldin,{" "}
@@ -77,11 +77,11 @@ function Dashboard() {
             {rooms.map((room) => (
               <li key={room.roomId}>
                 <button
-                  onClick={() => goToRoom(room.roomId)}
+                  onClick={() => goToRoom(room.roomId,room.users.find((u)=>u.username !== user.username))}
                   className="w-full text-left px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition border border-gray-200 shadow-sm font-medium text-gray-700"
                 >
                   <span className="font-semibold text-blue-600">
-                    {room.users.map((user)=> (<span> {user.username} </span>))}
+                    {room.users.map((user)=> (<span key={user.username}> {user.username} </span>))}
                   </span>
                   odası
                 </button>
