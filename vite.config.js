@@ -7,6 +7,7 @@ dotenv.config();
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/ChitChat/",
   plugins: [
     react(),
     tailwindcss(),
