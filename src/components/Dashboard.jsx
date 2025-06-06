@@ -3,19 +3,24 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { logoutUser } from "../services/auth";
+import { motion } from "framer-motion";
 
 function Dashboard() {
   const { user, logout } = useContext(UserContext);
   const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchRooms = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/chat/rooms");
       setRooms(res.data);
     } catch (err) {
       console.error(err);
       alert("Odalar yüklenemedi!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,8 +48,8 @@ function Dashboard() {
     navigate("/login");
   };
 
-  const goToRoom = (roomId,guest) => {
-    navigate(`/chat/${roomId}` , {state:{guest:guest}});
+  const goToRoom = (roomId, guest) => {
+    navigate(`/chat/${roomId}`, { state: { guest: guest } });
   };
 
   return (
@@ -58,30 +63,57 @@ function Dashboard() {
           <button
             onClick={handleNewChat}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow"
+            disabled={loading}
           >
             Yeni sohbet başlat
           </button>
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium shadow"
+            disabled={loading}
           >
             Çıkış yap
           </button>
         </div>
-
         <h3 className="text-lg font-semibold text-gray-700 mb-3 text-center">
           Geçmiş sohbetlerin
         </h3>
-        {rooms.length > 0 ? (
+        {loading ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="flex flex-col items-center justify-center my-4"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+              className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full mb-2"
+              style={{
+                borderTopColor: "transparent",
+                borderRightColor: "#3b82f6",
+              }}
+            />
+            <span className="text-blue-500 font-semibold">Yükleniyor...</span>
+          </motion.div>
+        ) : rooms.length > 0 ? (
           <ul className="space-y-2">
             {rooms.map((room) => (
               <li key={room.roomId}>
                 <button
-                  onClick={() => goToRoom(room.roomId,room.users.find((u)=>u.username !== user.username))}
+                  onClick={() =>
+                    goToRoom(
+                      room.roomId,
+                      room.users.find((u) => u.username !== user.username)
+                    )
+                  }
                   className="w-full text-left px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition border border-gray-200 shadow-sm font-medium text-gray-700"
+                  disabled={loading}
                 >
                   <span className="font-semibold text-blue-600">
-                    {room.users.map((user)=> (<span key={user.username}> {user.username} </span>))}
+                    {room.users.map((user) => (
+                      <span key={user.username}> {user.username} </span>
+                    ))}
                   </span>
                   odası
                 </button>
