@@ -18,7 +18,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.API,
+        target: process.env.API || "https://chitchat-qe8b.onrender.com",
         changeOrigin: true,
         secure: false,
       },
