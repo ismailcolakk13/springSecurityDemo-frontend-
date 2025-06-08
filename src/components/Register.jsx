@@ -1,6 +1,7 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { registerUser } from "../services/auth";
 
 function Register() {
   const navigate = useNavigate();
