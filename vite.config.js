@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
 import dotenv from 'dotenv';
+import { defineConfig } from "vite";
 
 dotenv.config();
 
@@ -17,12 +17,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://chitchat-qe8b.onrender.com",
+        target: "http://localhost:8080",
         changeOrigin: true,
         secure: true,
       },
       "/ws-chat": {
-        target: process.env.API,
+        target: "http://localhost:8080",
         ws: true,
         changeOrigin: true,
       },

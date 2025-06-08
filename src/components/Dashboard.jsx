@@ -21,6 +21,7 @@ function Dashboard() {
     try {
       const res = await api.get("/chat/rooms");
       setRooms(res.data);
+      console.log("Oda listesi: ", res.data);
     } catch (err) {
       console.error(err);
       alert("Odalar yüklenemedi!");
@@ -186,11 +187,11 @@ function Dashboard() {
                   disabled={loading}
                 >
                   <span className="font-semibold text-blue-600">
-                    {room.users.map((user) => (
-                      <span key={user.username}> {user.username} </span>
-                    ))}
+                    {
+                      room.users.find((u) => u.username !== user.username)?.username
+                    }
                   </span>
-                  odası
+                  : {room.lastMessage.text}
                 </button>
               </li>
             ))}
