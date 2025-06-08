@@ -1,10 +1,10 @@
+import { motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
 import { UserContext } from "../context/UserContext";
 import api from "../services/api";
-import { motion } from "framer-motion";
 
 function ChatRoom() {
   const { roomId } = useParams();
@@ -98,7 +98,7 @@ function ChatRoom() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white shadow-xl rounded-xl w-full max-w-2xl flex flex-col h-[80vh] overflow-hidden md:h-[80vh] md:my-0 my-0 md:rounded-xl rounded-none md:max-w-2xl max-w-full min-h-[100dvh] md:min-h-0">
+      <div className="bg-white shadow-xl rounded-xl w-full max-w-2xl flex flex-col h-[80vh] overflow-hidden md:h-[80vh] md:my-0 my-0 md:rounded-xl md:max-w-2xl min-h-[100dvh] md:min-h-0">
         <header className="p-4 bg-white shadow-md flex items-center justify-between rounded-t-xl z-10">
           <button
             onClick={() => navigate("/dashboard")}

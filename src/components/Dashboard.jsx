@@ -1,14 +1,19 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
+import { motion } from "framer-motion";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 import api from "../services/api";
 import { logoutUser } from "../services/auth";
-import { motion } from "framer-motion";
 
 function Dashboard() {
   const { user, logout } = useContext(UserContext);
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [newChatId, setNewChatId] = useState("");
+  const [newChatMsg, setNewChatMsg] = useState("");
+  const [sending, setSending] = useState(false);
+  const inputRef = useRef(null);
   const navigate = useNavigate();
 
   const fetchRooms = async () => {
@@ -28,17 +33,28 @@ function Dashboard() {
     fetchRooms();
   }, []);
 
-  const handleNewChat = async () => {
-    const receiverId = prompt("Kiminle konuşucan ID gir:");
-    const firstMsg = prompt("Açılış yazını yaz!:");
+  const handleNewChat = () => {
+    setShowModal(true);
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
 
-    if (receiverId) {
-      try {
-        const res = await api.post("/chat/send", { receiverId, firstMsg });
-        navigate(`/chat/${res.data.roomId}`);
-      } catch (error) {
-        alert("Sohbet başlatılamadı!");
-      }
+  const handleSendNewChat = async (e) => {
+    e.preventDefault();
+    if (!newChatId) return;
+    setSending(true);
+    try {
+      const res = await api.post("/chat/send", {
+        receiverId: newChatId,
+        firstMsg: newChatMsg,
+      });
+      setShowModal(false);
+      setNewChatId("");
+      setNewChatMsg("");
+      navigate(`/chat/${res.data.roomId}`);
+    } catch (error) {
+      alert("Sohbet başlatılamadı!");
+    } finally {
+      setSending(false);
     }
   };
 
@@ -55,6 +71,81 @@ function Dashboard() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
+        <div className="flex flex-col items-center mb-6">
+          <motion.button
+            whileHover={{
+              scale: 1.08,
+              boxShadow: "0 8px 24px rgba(59,130,246,0.15)",
+            }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleNewChat}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full text-lg font-bold shadow-lg hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-300 mb-2"
+            disabled={loading}
+            style={{ minWidth: 220 }}
+          >
+            <span className="text-2xl">＋</span>
+            Yeni sohbet başlat
+          </motion.button>
+        </div>
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-xs flex flex-col gap-4"
+            >
+              <h4 className="text-lg font-bold text-gray-800 mb-2 text-center">
+                Yeni Sohbet Başlat
+              </h4>
+              <form
+                onSubmit={handleSendNewChat}
+                className="flex flex-col gap-3"
+              >
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Alıcı ID"
+                  value={newChatId}
+                  onChange={(e) => setNewChatId(e.target.value)}
+                  required
+                  disabled={sending}
+                />
+                <input
+                  type="text"
+                  className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Açılış mesajı"
+                  value={newChatMsg}
+                  onChange={(e) => setNewChatMsg(e.target.value)}
+                  disabled={sending}
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-500 text-white rounded-lg px-4 py-2 font-semibold hover:bg-blue-600 transition disabled:opacity-60"
+                    disabled={sending || !newChatId}
+                  >
+                    {sending ? "Gönderiliyor..." : "Gönder"}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex-1 bg-gray-200 text-gray-700 rounded-lg px-4 py-2 font-semibold hover:bg-gray-300 transition"
+                    onClick={() => {
+                      setShowModal(false);
+                      setNewChatId("");
+                      setNewChatMsg("");
+                    }}
+                    disabled={sending}
+                  >
+                    İptal
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
         <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
           Hoşgeldin,{" "}
           <span className="text-blue-600">{user?.username}</span>
