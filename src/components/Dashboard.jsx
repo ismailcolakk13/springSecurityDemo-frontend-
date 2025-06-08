@@ -179,7 +179,7 @@ function Dashboard() {
                   onClick={() =>
                     goToRoom(
                       room.roomId,
-                      room.users.find((u) => u.username !== user.username)
+                      room.users.find((u) => u.username !== user?.username)
                     )
                   }
                   className="w-full text-left px-4 py-2 bg-gray-100 rounded-lg hover:bg-blue-100 transition border border-gray-200 shadow-sm font-medium text-gray-700"
@@ -187,7 +187,7 @@ function Dashboard() {
                 >
                   <span className="font-semibold text-blue-600">
                     {
-                      room.users.find((u) => u.username !== user.username)?.username
+                      room.users.find((u) => u.username !== user?.username)?.username
                     }
                   </span>
                   : {room.lastMessage.text}
