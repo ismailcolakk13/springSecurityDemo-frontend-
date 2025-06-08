@@ -60,9 +60,8 @@ function Dashboard() {
   };
 
   const handleLogout = async () => {
-    await logoutUser();
+    await logoutUser().then(() => navigate("/login"));
     logout();
-    navigate("/login");
   };
 
   const goToRoom = (roomId, guest) => {
