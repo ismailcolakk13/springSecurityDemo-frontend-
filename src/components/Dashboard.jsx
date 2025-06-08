@@ -71,22 +71,6 @@ function Dashboard() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
-        <div className="flex flex-col items-center mb-6">
-          <motion.button
-            whileHover={{
-              scale: 1.08,
-              boxShadow: "0 8px 24px rgba(59,130,246,0.15)",
-            }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleNewChat}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full text-lg font-bold shadow-lg hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-300 mb-2"
-            disabled={loading}
-            style={{ minWidth: 220 }}
-          >
-            <span className="text-2xl">＋</span>
-            Yeni sohbet başlat
-          </motion.button>
-        </div>
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
